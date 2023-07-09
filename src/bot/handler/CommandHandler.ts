@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Client, Events } from 'discord.js';
-import { chatInputCommandInteractionCommands } from '../command/commandList';
+import { chatInputCommandInteractionCommands, commands } from '../command/commandList';
 import logger from '../../utility/logging/logging';
 class CommandHandler {
   private client: Client;
@@ -16,7 +16,7 @@ class CommandHandler {
     const args = interaction.options;
     if (!chatInputCommandInteractionCommands.has(command)) return;
     try {
-      await chatInputCommandInteractionCommands.get(command).execute(interaction, args);
+      await chatInputCommandInteractionCommands.get(command)!.execute(interaction, args);
     } catch (err) {
       logger.error(err);
       await interaction.reply({

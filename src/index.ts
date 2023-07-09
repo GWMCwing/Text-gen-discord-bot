@@ -16,23 +16,4 @@ import logger from './utility/logging/logging';
   });
 
   await new Bot(client).start();
-
-  // client.once(Events.ClientReady, (c) => {
-  //   console.log(`Logged in as ${c.user?.tag}`);
-  // });
-
-  // client.on(Events.MessageCreate, (message) => {
-  //   if (message.content === 'ping') {
-  //     message.reply({
-  //       content: 'pong',
-  //       allowedMentions: { repliedUser: false },
-  //     });
-  //   } else if (message.content === 'hello') {
-  //     // react ban emoji
-  //     message.react('⛔');
-  //   }
-  // });
-  // new CommandHandler(client).start();
-
-  // client.login(process.env.DISCORD_TOKEN);
 })();
