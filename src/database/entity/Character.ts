@@ -7,8 +7,11 @@ class Character extends LastUpdate {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id!: string;
 
-  @Column({ type: 'text', default: '', nullable: false })
-  name!: string;
+  @Column({ name: 'profile_name', type: 'text', default: '', nullable: false })
+  profileName!: string;
+
+  @Column({ name: 'character_name', type: 'text', default: '', nullable: false })
+  characterName!: string;
 
   @Column({ type: 'text', default: '', nullable: false })
   context!: string;
