@@ -2,21 +2,33 @@
   "name": "text-gen",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
     "build": "npx tsc",
-    "start": "node ./dist/index.js"
+    "startOnly": "node ./dist/index.js",
+    "start": "npx tsc && node ./dist/index.js",
+    "register": "npx tsc && node ./dist/bot/command/register.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^4.1.2",
     "discord.js": "^14.11.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "moment": "^2.29.4",
+    "pg": "^8.11.1",
+    "reflect-metadata": "^0.1.13",
+    "sql-highlight": "^4.3.3",
+    "typeorm": "^0.3.17",
+    "winston": "^3.9.0",
+    "winston-daily-rotate-file": "^4.7.1",
+    "yaml": "^2.3.1"
   },
   "devDependencies": {
+    "@types/node": "^20.4.0",
+    "@types/pg": "^8.10.2",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
