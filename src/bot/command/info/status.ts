@@ -1,8 +1,8 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { loadavg, freemem } from 'os';
-import SlashCommand from '../SlashCommand';
+import { ChatInputSlashCommand } from '../SlashCommand';
 
-class Status implements SlashCommand<ChatInputCommandInteraction> {
+class Status extends ChatInputSlashCommand {
   public type = 'ChatInput' as const;
   public data = new SlashCommandBuilder().setName('status').setDescription('Show bot status');
   public async execute(interaction: ChatInputCommandInteraction) {
@@ -41,4 +41,4 @@ class Status implements SlashCommand<ChatInputCommandInteraction> {
   }
 }
 
-export default new Status();
+export default Status;

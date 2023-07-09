@@ -10,49 +10,54 @@ import {
   UserContextMenuCommandInteraction,
 } from 'discord.js';
 import status from './info/status';
-import SlashCommand from './SlashCommand';
+import { CreateCharacter } from './Chat/entity/Character';
+import { ChatInputSlashCommand, ModalSubmitSlashCommand, SlashCommand } from './SlashCommand';
+import { CreateConfig } from './Chat/Create';
 
-const commands = new Collection<string, SlashCommand<any>>();
+const commands = new Collection<string, SlashCommand>();
 //
-const chatInputCommandInteractionCommands = new Collection<string, SlashCommand<ChatInputCommandInteraction>>();
-const messageContextMenuCommandInteractionCommands = new Collection<string, SlashCommand<MessageContextMenuCommandInteraction>>();
-const userContextMenuCommandInteractionCommands = new Collection<string, SlashCommand<UserContextMenuCommandInteraction>>();
-const anySelectMenuInteractionCommands = new Collection<string, SlashCommand<AnySelectMenuInteraction>>();
-const buttonInteractionCommands = new Collection<string, SlashCommand<ButtonInteraction>>();
-const autocompleteInteractionCommands = new Collection<string, SlashCommand<AutocompleteInteraction>>();
-const modalSubmitInteractionCommands = new Collection<string, SlashCommand<ModalSubmitInteraction>>();
+const chatInputCommandInteractionCommands = new Collection<string, ChatInputSlashCommand>();
+const messageContextMenuCommandInteractionCommands = new Collection<string, SlashCommand>();
+const userContextMenuCommandInteractionCommands = new Collection<string, SlashCommand>();
+const anySelectMenuInteractionCommands = new Collection<string, SlashCommand>();
+const buttonInteractionCommands = new Collection<string, SlashCommand>();
+const autocompleteInteractionCommands = new Collection<string, SlashCommand>();
+const modalSubmitInteractionCommands = new Collection<string, ModalSubmitSlashCommand>();
 //
 //
-function SetCommand(command: SlashCommand<Interaction>) {
-  commands.set(command.data.name, command);
+function SetCommand(command: SlashCommand) {
+  // early return if the slash command does not require a data
   switch (command.type) {
     case 'ChatInput':
       chatInputCommandInteractionCommands.set(command.data.name, command);
       break;
-    case 'MessageContext':
-      messageContextMenuCommandInteractionCommands.set(command.data.name, command);
-      break;
-    case 'UserContext':
-      userContextMenuCommandInteractionCommands.set(command.data.name, command);
-      break;
-    case 'AnySelectMenu':
-      anySelectMenuInteractionCommands.set(command.data.name, command);
-      break;
-    case 'Button':
-      buttonInteractionCommands.set(command.data.name, command);
-      break;
-    case 'Autocomplete':
-      autocompleteInteractionCommands.set(command.data.name, command);
-      break;
+    // case 'MessageContext':
+    //   messageContextMenuCommandInteractionCommands.set(command.data.name, command);
+    //   break;
+    // case 'UserContext':
+    //   userContextMenuCommandInteractionCommands.set(command.data.name, command);
+    //   break;
+    // case 'AnySelectMenu':
+    //   anySelectMenuInteractionCommands.set(command.data.name, command);
+    //   break;
+    // case 'Button':
+    //   buttonInteractionCommands.set(command.data.name, command);
+    //   break;
+    // case 'Autocomplete':
+    //   autocompleteInteractionCommands.set(command.data.name, command);
+    //   break;
     case 'ModalSubmit':
-      modalSubmitInteractionCommands.set(command.data.name, command);
-      break;
+      modalSubmitInteractionCommands.set(command.modalId, command);
+      return;
     default:
       throw new Error('Invalid command type');
   }
+  commands.set(command.data.name, command);
 }
 //
-SetCommand(status);
+SetCommand(new status());
+SetCommand(new CreateCharacter());
+SetCommand(new CreateConfig());
 //
 export {
   commands,
