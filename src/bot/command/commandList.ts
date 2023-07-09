@@ -1,18 +1,9 @@
-import {
-  AnySelectMenuInteraction,
-  AutocompleteInteraction,
-  ButtonInteraction,
-  ChatInputCommandInteraction,
-  Collection,
-  Interaction,
-  MessageContextMenuCommandInteraction,
-  ModalSubmitInteraction,
-  UserContextMenuCommandInteraction,
-} from 'discord.js';
+import { Collection } from 'discord.js';
 import status from './info/status';
-import { CreateCharacter } from './Chat/entity/Character';
+import { CreateCharacter } from './chat/config/entity/character/Create';
 import { ChatInputSlashCommand, ModalSubmitSlashCommand, SlashCommand } from './SlashCommand';
-import { CreateConfig } from './Chat/Create';
+import { CreateConfig } from './chat/config/Create';
+import logger from '../../utility/logging/logging';
 
 const commands = new Collection<string, SlashCommand>();
 //
@@ -29,6 +20,7 @@ function SetCommand(command: SlashCommand) {
   // early return if the slash command does not require a data
   switch (command.type) {
     case 'ChatInput':
+      if (chatInputCommandInteractionCommands.has(command.data.name)) throw new Error(`Duplicate ChatInputSlashCommand: ${command.data.name}`);
       chatInputCommandInteractionCommands.set(command.data.name, command);
       break;
     // case 'MessageContext':
@@ -47,6 +39,7 @@ function SetCommand(command: SlashCommand) {
     //   autocompleteInteractionCommands.set(command.data.name, command);
     //   break;
     case 'ModalSubmit':
+      if (modalSubmitInteractionCommands.has(command.modalId)) throw new Error(`Duplicate modalId: ${command.modalId}`);
       modalSubmitInteractionCommands.set(command.modalId, command);
       return;
     default:
@@ -55,9 +48,33 @@ function SetCommand(command: SlashCommand) {
   commands.set(command.data.name, command);
 }
 //
+logger.info('Registering commands');
 SetCommand(new status());
 SetCommand(new CreateCharacter());
 SetCommand(new CreateConfig());
+
+logger.info(
+  `Registered:\n
+Command:
+${commands.map((command) => `- ${command.data.name}`).join('\n')}
+ChatInputSlashCommand:
+${chatInputCommandInteractionCommands.size === 0 ? '- None' : chatInputCommandInteractionCommands.map((command) => `- ${command.data.name}`).join('\n')}
+MessageContextMenuSlashCommand:
+${messageContextMenuCommandInteractionCommands.size === 0 ? '- None' : messageContextMenuCommandInteractionCommands.map((command) => command.data.toJSON()).join('\n')}
+UserContextMenuSlashCommand:
+${userContextMenuCommandInteractionCommands.size === 0 ? '- None' : userContextMenuCommandInteractionCommands.map((command) => command.data.toJSON()).join('\n')}
+AnySelectMenuSlashCommand:
+${anySelectMenuInteractionCommands.size === 0 ? '- None' : anySelectMenuInteractionCommands.map((command) => command.data.toJSON()).join('\n')}
+ButtonSlashCommand:
+${buttonInteractionCommands.size === 0 ? '- None' : buttonInteractionCommands.map((command) => command.data.toJSON()).join('\n')}
+AutocompleteSlashCommand:
+${autocompleteInteractionCommands.size === 0 ? '- None' : autocompleteInteractionCommands.map((command) => command.data.toJSON()).join('\n')}
+ModalSubmitSlashCommand:
+${modalSubmitInteractionCommands.size === 0 ? '- None' : modalSubmitInteractionCommands.map((command) => `- ${command.modalId}`).join('\n')}
+`
+);
+
+logger.info('Finished registering commands');
 //
 export {
   commands,
