@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Interaction, SlashCommandBuilder } from 'discord.js';
 import { ChatInputSlashCommand } from '../../SlashCommand';
-import { CreateCharacter } from './entity/character/Create';
+import { CreateCharacter } from '../entity/character/Create';
 
 class CreateConfig extends ChatInputSlashCommand {
   readonly idMap = {

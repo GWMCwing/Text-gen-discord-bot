@@ -1,5 +1,5 @@
 import { ActionRowBuilder, EmbedBuilder, ModalActionRowComponentBuilder, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle } from 'discord.js';
-import { ModalSubmitSlashCommand } from '../../../../SlashCommand';
+import { ModalSubmitSlashCommand } from '../../../SlashCommand';
 
 type ModalParameters = {
   profileName?: string;

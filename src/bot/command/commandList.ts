@@ -1,6 +1,6 @@
 import { Collection } from 'discord.js';
 import status from './info/status';
-import { CreateCharacter } from './chat/config/entity/character/Create';
+import { CreateCharacter } from './chat/entity/character/Create';
 import { ChatInputSlashCommand, ModalSubmitSlashCommand, SlashCommand } from './SlashCommand';
 import { CreateConfig } from './chat/config/Create';
 import logger from '../../utility/logging/logging';
