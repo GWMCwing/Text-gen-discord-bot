@@ -2,6 +2,10 @@
 .env
 *.code-workspace
 /dist
+
+postgrest.conf
+*.service
+
 # Logs
 logs
 *.log

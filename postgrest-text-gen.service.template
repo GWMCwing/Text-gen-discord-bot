@@ -1,0 +1,11 @@
+[Unit]
+Description=PostgREST Web API - discord text-gen
+After=network.target
+
+[Service]
+User=<user>
+ExecStart=postgrest <path-to-postgrest.config>
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
