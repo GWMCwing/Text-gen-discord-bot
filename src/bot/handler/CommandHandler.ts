@@ -1,17 +1,20 @@
 import { ChatInputCommandInteraction, Client, Events, ModalSubmitInteraction } from 'discord.js';
 import { chatInputCommandInteractionCommands, commands, modalSubmitInteractionCommands } from '../command/commandList';
 import logger from '../../utility/logging/logging';
-class CommandHandler {
-  private client: Client;
+import Handler from './Handler';
+
+class CommandHandler extends Handler {
   constructor(client: Client) {
-    this.client = client;
+    super(client);
   }
+
   public async start() {
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (interaction.isChatInputCommand()) this.handleChatInputCommand(interaction);
       if (interaction.isModalSubmit()) this.handleModalSubmitCommand(interaction);
     });
   }
+
   private async handleChatInputCommand(interaction: ChatInputCommandInteraction) {
     const command = interaction.commandName;
     const args = interaction.options;
@@ -26,6 +29,7 @@ class CommandHandler {
       });
     }
   }
+
   private async handleModalSubmitCommand(interaction: ModalSubmitInteraction) {
     const command = interaction.customId;
     if (!modalSubmitInteractionCommands.has(command)) return;
