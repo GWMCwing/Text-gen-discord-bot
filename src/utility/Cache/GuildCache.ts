@@ -1,7 +1,9 @@
+import { Channel } from 'discord.js';
 import Cache from './Cache';
 
 export interface GuildData {
   id: string;
+  registeredChannels: Channel[];
 }
 
 class GuildCache extends Cache<string, GuildData> {
@@ -17,6 +19,7 @@ class GuildCache extends Cache<string, GuildData> {
     // TODO:
     return {
       id: key,
+      registeredChannels: [],
     };
   }
 }
