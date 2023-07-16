@@ -43,10 +43,10 @@ CREATE TABLE IF NOT EXISTS "discord_channel"(
 -- Discord User
 -- ====================================
 CREATE TABLE IF NOT EXISTS "discord_user"(
-  "discord_user_id" text NOT NULL UNIQUE,
+  "user_id" text NOT NULL UNIQUE,
   -- trigger
   "created_at" timestamp NOT NULL DEFAULT NOW(),
-  PRIMARY KEY ("discord_user_id")
+  PRIMARY KEY ("user_id")
 );
 
 --
@@ -59,9 +59,11 @@ CREATE TABLE IF NOT EXISTS "chat"(
   "history_internal" text[] NOT NULL DEFAULT '{}',
   "history_visible" text[] NOT NULL DEFAULT '{}',
   "max_new_tokens" integer NOT NULL DEFAULT 250,
-  "your_name" boolean NOT NULL DEFAULT FALSE,
+  "your_name" text NOT NULL DEFAULT 'You',
+  "stop_at_newline" boolean NOT NULL DEFAULT FALSE,
   "chat_generation_attempts" integer NOT NULL DEFAULT 1,
-  "seed" boolean NOT NULL DEFAULT TRUE,
+  "seed" integer NOT NULL DEFAULT -1,
+  "add_bos_token" boolean NOT NULL DEFAULT TRUE,
   "truncation_length" integer NOT NULL DEFAULT 2048,
   "ban_eos_token" boolean NOT NULL DEFAULT FALSE,
   "skip_special_tokens" boolean NOT NULL DEFAULT TRUE,
@@ -93,7 +95,7 @@ CREATE TABLE IF NOT EXISTS "character"(
   "last_update" timestamp NOT NULL DEFAULT NOW(),
   "created_at" timestamp NOT NULL DEFAULT NOW(),
   -- foreign key
-  "discord_user_id" text NOT NULL,
+  "user_id" text NOT NULL,
   --
   PRIMARY KEY ("id", "profile_name")
 );
@@ -126,12 +128,12 @@ CREATE TABLE IF NOT EXISTS "preset"(
   "last_update" timestamp NOT NULL DEFAULT NOW(),
   "created_at" timestamp NOT NULL DEFAULT NOW(),
   -- foreign key
-  "discord_user_id" text NOT NULL,
+  "user_id" text NOT NULL,
   --
   PRIMARY KEY ("id", "name")
 );
 
-CREATE INDEX IF NOT EXISTS "preset_discord_user_id_idx" ON "preset"("discord_user_id");
+CREATE INDEX IF NOT EXISTS "preset_discord_user_id_idx" ON "preset"("user_id");
 
 CREATE INDEX IF NOT EXISTS "preset_name_idx" ON "preset"("name");
 
@@ -171,7 +173,7 @@ CREATE TABLE IF NOT EXISTS "setting"(
   "last_update" timestamp NOT NULL DEFAULT NOW(),
   "created_at" timestamp NOT NULL DEFAULT NOW(),
   -- foreign key
-  "discord_user_id" text NOT NULL,
+  "user_id" text NOT NULL,
   --
   PRIMARY KEY ("id", "name")
 );
@@ -193,21 +195,21 @@ ALTER TABLE "discord_channel"
 -- preset
 -- ====================================
 ALTER TABLE "preset"
-  ADD CONSTRAINT "FK_discord_user_TO_preset" FOREIGN KEY ("discord_user_id") REFERENCES "discord_user"("discord_user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT "FK_discord_user_TO_preset" FOREIGN KEY ("user_id") REFERENCES "discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- ====================================
 -- character
 -- ====================================
 ALTER TABLE "character"
-  ADD CONSTRAINT "FK_discord_user_TO_character" FOREIGN KEY ("discord_user_id") REFERENCES "discord_user"("discord_user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT "FK_discord_user_TO_character" FOREIGN KEY ("user_id") REFERENCES "discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- ====================================
 -- setting
 -- ====================================
 ALTER TABLE "setting"
-  ADD CONSTRAINT "FK_discord_user_TO_setting" FOREIGN KEY ("discord_user_id") REFERENCES "discord_user"("discord_user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT "FK_discord_user_TO_setting" FOREIGN KEY ("user_id") REFERENCES "discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- ====================================
