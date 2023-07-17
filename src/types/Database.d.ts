@@ -65,8 +65,10 @@ interface Chat extends WithId, WithCreatedAt, WithLastUpdate {
 }
 
 interface Character extends WithId, WithCreatedAt, WithLastUpdate {
-  profile_name?: string;
-  context?: string;
+  profile_name: string;
+  name2: string;
+  greeting: string;
+  context: string;
   // fk
   user_id: string;
 }
@@ -94,19 +96,14 @@ interface Preset extends WithId, WithCreatedAt, WithLastUpdate {
 
 interface Setting extends WithId, WithCreatedAt, WithLastUpdate {
   name: string;
-  context: string;
-  greeting: string;
-  turn_template: string;
   //
-  dark_theme?: boolean;
-  autoload_model?: boolean;
   max_new_tokens?: number;
   max_new_tokens_min?: number;
   max_new_tokens_max?: number;
   seed?: boolean;
   name1?: string;
-  name2?: string;
   custom_stopping_strings?: string;
+  stopping_strings?: string[];
   stop_at_newline?: boolean;
   add_bos_token?: boolean;
   ban_eos_token?: boolean;
@@ -114,11 +111,9 @@ interface Setting extends WithId, WithCreatedAt, WithLastUpdate {
   truncation_length?: number;
   truncation_length_min?: number;
   truncation_length_max?: number;
-  mode?: number;
+  mode?: string;
   chat_generation_attempts_min?: number;
   chat_generation_attempts_max?: number;
-  default_extensions?: string[];
-  chat_default_extensions?: string[];
   // fk
   user_id: string;
 }

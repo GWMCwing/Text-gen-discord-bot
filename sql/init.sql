@@ -94,6 +94,8 @@ CREATE TABLE IF NOT EXISTS "discord_chat"."chat"(
 CREATE TABLE IF NOT EXISTS "discord_chat"."character"(
   "id" uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
   "profile_name" text NOT NULL,
+  "name2" text NOT NULL,
+  "greeting" text NOT NULL,
   "context" text NOT NULL,
   --
   -- trigger
@@ -149,19 +151,14 @@ CREATE INDEX IF NOT EXISTS "preset_name_idx" ON "discord_chat"."preset"("name");
 CREATE TABLE IF NOT EXISTS "discord_chat"."setting"(
   "id" uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
   "name" text NOT NULL,
-  "context" text NOT NULL,
-  "greeting" text NOT NULL,
-  "turn_template" text NOT NULL,
   --
-  "dark_theme" boolean NOT NULL DEFAULT FALSE,
-  "autoload_model" boolean NOT NULL DEFAULT FALSE,
   "max_new_tokens" integer NOT NULL DEFAULT 200,
   "max_new_tokens_min" integer NOT NULL DEFAULT 0,
   "max_new_tokens_max" integer NOT NULL DEFAULT 2000,
   "seed" boolean NOT NULL DEFAULT FALSE,
-  "name1" text NOT NULL DEFAULT 'You',
-  "name2" text NOT NULL DEFAULT 'Assistant',
-  "custom_stopping_strings" text NOT NULL DEFAULT '{}',
+  "name1" text NOT NULL DEFAULT 'Assistant',
+  "custom_stopping_strings" text NOT NULL DEFAULT '',
+  "stopping_strings" text[] NOT NULL DEFAULT '{}',
   "stop_at_newline" boolean NOT NULL DEFAULT FALSE,
   "add_bos_token" boolean NOT NULL DEFAULT TRUE,
   "ban_eos_token" boolean NOT NULL DEFAULT FALSE,
@@ -169,11 +166,9 @@ CREATE TABLE IF NOT EXISTS "discord_chat"."setting"(
   "truncation_length" integer NOT NULL DEFAULT 2048,
   "truncation_length_min" integer NOT NULL DEFAULT 0,
   "truncation_length_max" integer NOT NULL DEFAULT 16384,
-  "mode" integer NOT NULL DEFAULT 1,
+  "mode" text NOT NULL DEFAULT 'chat',
   "chat_generation_attempts_min" integer NOT NULL DEFAULT 1,
   "chat_generation_attempts_max" integer NOT NULL DEFAULT 10,
-  "default_extensions" text[] NOT NULL DEFAULT '{}',
-  "chat_default_extensions" text[] NOT NULL DEFAULT '{}',
   -- trigger
   "last_update" timestamp NOT NULL DEFAULT NOW(),
   "created_at" timestamp NOT NULL DEFAULT NOW(),
