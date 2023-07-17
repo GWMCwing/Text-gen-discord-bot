@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import status from './info/status';
+import Status from './info/status';
 import { CreateCharacter } from './chat/entity/character/Create';
 import { ChatInputSlashCommand, ModalSubmitSlashCommand, SlashCommand } from './SlashCommand';
 import { CreateConfig } from './chat/config/Create';
@@ -49,10 +49,11 @@ function SetCommand(command: SlashCommand) {
 }
 //
 logger.info('Registering commands');
-SetCommand(new status());
+SetCommand(new Status());
 SetCommand(new CreateCharacter());
 SetCommand(new CreateConfig());
 
+//
 logger.info(
   `Registered:\n
 Command:

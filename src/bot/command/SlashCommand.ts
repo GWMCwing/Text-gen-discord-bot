@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction, Interaction, ModalBuilder, ModalSubmitInte
 abstract class _SlashCommand<T extends Interaction> {
   abstract readonly type: 'ChatInput' | 'MessageContext' | 'UserContext' | 'AnySelectMenu' | 'Button' | 'Autocomplete' | 'ModalSubmit';
   public abstract data: SlashCommandBuilder | Omit<SlashCommandBuilder, 'addSubcommand' | 'addSubcommandGroup'>;
-  public abstract execute(interaction: T, ...args: any[]): Promise<void>;
+  public abstract execute(interaction: T, ...args: any[]): Promise<unknown>;
 }
 
 abstract class ChatInputSlashCommand extends _SlashCommand<ChatInputCommandInteraction> {

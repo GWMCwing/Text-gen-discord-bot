@@ -11,8 +11,8 @@ abstract class Cache<T1, T2> {
     this.cache = new Map();
     this.expirationLimit = expiration;
   }
-  protected abstract getFromSource(key: T1): T2 | undefined;
-  protected abstract setToSource(key: T1, value: T2): void;
+  protected abstract getFromSource(key: T1): Promise<T2 | undefined>;
+  protected abstract setToSource(key: T1, value: T2): Promise<void>;
 
   private _get(key: T1): CacheData<T2> | undefined {
     const cacheData = this.cache.get(key);
@@ -24,10 +24,10 @@ abstract class Cache<T1, T2> {
     return cacheData;
   }
 
-  public get(key: T1): T2 | undefined {
+  public async get(key: T1): Promise<T2 | undefined> {
     const data = this._get(key);
     if (data) return data.data;
-    const newData = this.getFromSource(key);
+    const newData = await this.getFromSource(key);
     if (newData) {
       this._set(key, newData);
       return newData;
@@ -42,8 +42,8 @@ abstract class Cache<T1, T2> {
     });
   }
 
-  public set(key: T1, value: T2): void {
-    this.setToSource(key, value);
+  public async set(key: T1, value: T2): Promise<void> {
+    await this.setToSource(key, value);
     this._set(key, value);
   }
 
