@@ -1,51 +1,62 @@
 import { GenericFunction, GenericSchema, GenericTable, GenericView } from '@supabase/postgrest-js/dist/module/types';
-
-type WithDefault<T> = T | undefined;
-type Nullable<T> = T | null | undefined;
-type NullableWithDefault<T> = WithDefault<Nullable<T>>;
-type TableRow<T> = Record<string & keyof T, T[keyof T]>;
+//
+//
+type Nullable<T> = T | null;
+type AllPresent<T> = {
+  [K in keyof T]-?: T[K];
+};
+// type ExcludeWithDefault<T> = ExcludeField<T, WithDefault<keyof T>>;
+//
+type TriggerColumn = 'id' | 'createdAt' | 'last_update';
+//
+type TableRow<T> = {
+  [K in keyof T]: T[K];
+};
+// remove Trigger Column from T, make WithDefault and Nullable optional
+type UpdateRow<T extends TableRow<T>, O extends string | null = null> = O extends string ? Omit<T, TriggerColumn | O> : Omit<T, TriggerColumn>;
+type InsertRow<T extends TableRow<T>, O extends string | null = null> = UpdateRow<T, O>;
 
 interface WithId {
-  id: WithDefault<string>;
+  id?: string;
 }
 
 interface WithCreatedAt {
-  createdAt: WithDefault<Date>;
+  createdAt?: Date;
 }
 
 interface WithLastUpdate {
-  last_update: WithDefault<Date>;
+  last_update?: Date;
 }
 
 interface DiscordGuild extends WithCreatedAt {
-  guild_id: WithDefault<string>;
+  guild_id: string;
 }
 
 interface DiscordChannel extends WithCreatedAt {
-  channel_id: WithDefault<string>;
-  guild_id: WithDefault<string>;
+  channel_id: string;
+  guild_id: string;
 }
 
 interface DiscordUser extends WithCreatedAt {
-  user_id: WithDefault<string>;
+  user_id: string;
 }
 
 interface Chat extends WithId, WithCreatedAt, WithLastUpdate {
-  history_internal: WithDefault<string[]>;
-  history_visible: WithDefault<string[]>;
-  max_new_tokens: WithDefault<number>;
-  your_name: WithDefault<string>;
-  stop_at_newline: WithDefault<boolean>;
-  chat_generation_attempts: WithDefault<number>;
-  seed: WithDefault<number>;
-  add_bos_token: WithDefault<boolean>;
-  truncation_length: WithDefault<number>;
-  ban_eos_token: WithDefault<boolean>;
-  skip_special_tokens: WithDefault<boolean>;
-  stopping_strings: WithDefault<string[]>;
+  history_internal?: string[];
+  history_visible?: string[];
+  max_new_tokens?: number;
+  your_name?: string;
+  stop_at_newline?: boolean;
+  chat_generation_attempts?: number;
+  seed?: number;
+  add_bos_token?: boolean;
+  truncation_length?: number;
+  ban_eos_token?: boolean;
+  skip_special_tokens?: boolean;
+  stopping_strings?: string[];
   // trigger
-  total_history_internal_character: WithDefault<number>;
-  total_history_visible_character: WithDefault<number>;
+  total_history_internal_character?: number;
+  total_history_visible_character?: number;
   // fk
   channel_id: string;
   character_id: Nullable<string>;
@@ -54,8 +65,8 @@ interface Chat extends WithId, WithCreatedAt, WithLastUpdate {
 }
 
 interface Character extends WithId, WithCreatedAt, WithLastUpdate {
-  profile_name: WithDefault<string>;
-  context: WithDefault<string>;
+  profile_name?: string;
+  context?: string;
   // fk
   user_id: string;
 }
@@ -63,20 +74,20 @@ interface Character extends WithId, WithCreatedAt, WithLastUpdate {
 interface Preset extends WithId, WithCreatedAt, WithLastUpdate {
   name: string;
   //
-  temperature: WithDefault<number>;
-  top_p: WithDefault<number>;
-  top_k: WithDefault<number>;
-  typical_p: WithDefault<number>;
-  epsilon_cutoff: WithDefault<number>;
-  eta_cutoff: WithDefault<number>;
-  repetition_penalty: WithDefault<number>;
-  repetition_penalty_range: WithDefault<number>;
-  encoder_repetition_penalty: WithDefault<number>;
-  no_repeat_ngram_size: WithDefault<number>;
-  min_length: WithDefault<number>;
-  tfs: WithDefault<number>;
-  top_a: WithDefault<number>;
-  do_sample: WithDefault<boolean>;
+  temperature?: number;
+  top_p?: number;
+  top_k?: number;
+  typical_p?: number;
+  epsilon_cutoff?: number;
+  eta_cutoff?: number;
+  repetition_penalty?: number;
+  repetition_penalty_range?: number;
+  encoder_repetition_penalty?: number;
+  no_repeat_ngram_size?: number;
+  min_length?: number;
+  tfs?: number;
+  top_a?: number;
+  do_sample?: boolean;
   // fk
   user_id: string;
 }
@@ -87,27 +98,27 @@ interface Setting extends WithId, WithCreatedAt, WithLastUpdate {
   greeting: string;
   turn_template: string;
   //
-  dark_theme: WithDefault<boolean>;
-  autoload_model: WithDefault<boolean>;
-  max_new_tokens: WithDefault<number>;
-  max_new_tokens_min: WithDefault<number>;
-  max_new_tokens_max: WithDefault<number>;
-  seed: WithDefault<boolean>;
-  name1: WithDefault<string>;
-  name2: WithDefault<string>;
-  custom_stopping_strings: WithDefault<string>;
-  stop_at_newline: WithDefault<boolean>;
-  add_bos_token: WithDefault<boolean>;
-  ban_eos_token: WithDefault<boolean>;
-  skip_special_tokens: WithDefault<boolean>;
-  truncation_length: WithDefault<number>;
-  truncation_length_min: WithDefault<number>;
-  truncation_length_max: WithDefault<number>;
-  mode: WithDefault<number>;
-  chat_generation_attempts_min: WithDefault<number>;
-  chat_generation_attempts_max: WithDefault<number>;
-  default_extensions: WithDefault<string[]>;
-  chat_default_extensions: WithDefault<string[]>;
+  dark_theme?: boolean;
+  autoload_model?: boolean;
+  max_new_tokens?: number;
+  max_new_tokens_min?: number;
+  max_new_tokens_max?: number;
+  seed?: boolean;
+  name1?: string;
+  name2?: string;
+  custom_stopping_strings?: string;
+  stop_at_newline?: boolean;
+  add_bos_token?: boolean;
+  ban_eos_token?: boolean;
+  skip_special_tokens?: boolean;
+  truncation_length?: number;
+  truncation_length_min?: number;
+  truncation_length_max?: number;
+  mode?: number;
+  chat_generation_attempts_min?: number;
+  chat_generation_attempts_max?: number;
+  default_extensions?: string[];
+  chat_default_extensions?: string[];
   // fk
   user_id: string;
 }
@@ -115,62 +126,66 @@ interface Setting extends WithId, WithCreatedAt, WithLastUpdate {
 // Tables
 
 export class DiscordGuildTable implements GenericTable {
-  Row: TableRow<DiscordGuild>;
-  Insert: TableRow<DiscordGuild>;
-  Update: TableRow<DiscordGuild>;
+  Row: AllPresent<TableRow<DiscordGuild>>;
+  Insert: InsertRow<DiscordGuild>;
+  Update: UpdateRow<DiscordGuild>;
 }
 
 export class DiscordChannelTable implements GenericTable {
-  Row: TableRow<DiscordChannel>;
-  Insert: TableRow<DiscordChannel>;
-  Update: TableRow<DiscordChannel>;
+  Row: AllPresent<TableRow<DiscordChannel>>;
+  Insert: InsertRow<DiscordChannel>;
+  Update: UpdateRow<DiscordChannel>;
 }
 
 export class DiscordUserTable implements GenericTable {
-  Row: TableRow<DiscordUser>;
-  Insert: TableRow<DiscordUser>;
-  Update: TableRow<DiscordUser>;
+  Row: AllPresent<TableRow<DiscordUser>>;
+  Insert: InsertRow<DiscordUser>;
+  Update: UpdateRow<DiscordUser>;
 }
 
 export class ChatTable implements GenericTable {
-  Row: TableRow<Chat>;
-  Insert: TableRow<Chat>;
-  Update: TableRow<Chat>;
+  Row: AllPresent<TableRow<Chat>>;
+  Insert: InsertRow<Chat>;
+  Update: UpdateRow<Chat>;
 }
 
 export class CharacterTable implements GenericTable {
-  Row: TableRow<Character>;
-  Insert: TableRow<Character>;
-  Update: TableRow<Character>;
+  Row: AllPresent<TableRow<Character>>;
+  Insert: InsertRow<Character>;
+  Update: UpdateRow<Character>;
 }
 
 export class PresetTable implements GenericTable {
-  Row: TableRow<Preset>;
-  Insert: TableRow<Preset>;
-  Update: TableRow<Preset>;
+  Row: AllPresent<TableRow<Preset>>;
+  Insert: InsertRow<Preset>;
+  Update: UpdateRow<Preset>;
 }
 
 export class SettingTable implements GenericTable {
-  Row: TableRow<Setting>;
-  Insert: TableRow<Setting>;
-  Update: TableRow<Setting>;
+  Row: AllPresent<TableRow<Setting>>;
+  Insert: InsertRow<Setting>;
+  Update: UpdateRow<Setting>;
 }
 
 // schema
 
-type DiscordSchemaTables_key = 'discord_guild' | 'discord_channel' | 'discord_user';
-type DiscordSchemaTables = DiscordGuildTable | DiscordChannelTable | DiscordUserTable;
-type DiscordChatSchemaTables_key = 'chat' | 'character' | 'preset' | 'setting';
-type DiscordChatSchemaTables = ChatTable | CharacterTable | PresetTable | SettingTable;
-
 export class DiscordSchema implements GenericSchema {
-  Tables: Record<DiscordSchemaTables_key, DiscordSchemaTables>;
+  Tables: {
+    discord_guild: DiscordGuildTable;
+    discord_channel: DiscordChannelTable;
+    discord_user: DiscordUserTable;
+  };
   Views: Record<string, GenericView>;
   Functions: Record<string, GenericFunction>;
 }
 
 export class DiscordChatSchema implements GenericSchema {
-  Tables: Record<DiscordChatSchemaTables_key, DiscordChatSchemaTables>;
+  Tables: {
+    chat: ChatTable;
+    character: CharacterTable;
+    preset: PresetTable;
+    setting: SettingTable;
+  };
   Views: Record<string, GenericView>;
   Functions: Record<string, GenericFunction>;
 }
@@ -187,10 +202,12 @@ export class DiscordDatabase {
 export type {
   // utility
   WithCreatedAt,
-  WithDefault,
   WithId,
   WithLastUpdate,
   TableRow,
+  InsertRow,
+  UpdateRow,
+  TriggerColumn,
   // entity
   Character,
   Chat,
@@ -198,7 +215,6 @@ export type {
   DiscordGuild,
   DiscordUser,
   Nullable,
-  NullableWithDefault,
   Preset,
   Setting,
 };
