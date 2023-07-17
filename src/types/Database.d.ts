@@ -1,8 +1,9 @@
 import { GenericFunction, GenericSchema, GenericTable, GenericView } from '@supabase/postgrest-js/dist/module/types';
 
-type WithDefault<T> = T;
-type Nullable<T> = T | null;
+type WithDefault<T> = T | undefined;
+type Nullable<T> = T | null | undefined;
 type NullableWithDefault<T> = WithDefault<Nullable<T>>;
+type TableRow<T> = Record<string & keyof T, T[keyof T]>;
 
 interface WithId {
   id: WithDefault<string>;
@@ -17,9 +18,7 @@ interface WithLastUpdate {
 }
 
 interface DiscordGuild extends WithCreatedAt {
-  Row: {
-    guild_id: WithDefault<string>;
-  };
+  guild_id: WithDefault<string>;
 }
 
 interface DiscordChannel extends WithCreatedAt {
@@ -112,3 +111,94 @@ interface Setting extends WithId, WithCreatedAt, WithLastUpdate {
   // fk
   user_id: string;
 }
+
+// Tables
+
+export class DiscordGuildTable implements GenericTable {
+  Row: TableRow<DiscordGuild>;
+  Insert: TableRow<DiscordGuild>;
+  Update: TableRow<DiscordGuild>;
+}
+
+export class DiscordChannelTable implements GenericTable {
+  Row: TableRow<DiscordChannel>;
+  Insert: TableRow<DiscordChannel>;
+  Update: TableRow<DiscordChannel>;
+}
+
+export class DiscordUserTable implements GenericTable {
+  Row: TableRow<DiscordUser>;
+  Insert: TableRow<DiscordUser>;
+  Update: TableRow<DiscordUser>;
+}
+
+export class ChatTable implements GenericTable {
+  Row: TableRow<Chat>;
+  Insert: TableRow<Chat>;
+  Update: TableRow<Chat>;
+}
+
+export class CharacterTable implements GenericTable {
+  Row: TableRow<Character>;
+  Insert: TableRow<Character>;
+  Update: TableRow<Character>;
+}
+
+export class PresetTable implements GenericTable {
+  Row: TableRow<Preset>;
+  Insert: TableRow<Preset>;
+  Update: TableRow<Preset>;
+}
+
+export class SettingTable implements GenericTable {
+  Row: TableRow<Setting>;
+  Insert: TableRow<Setting>;
+  Update: TableRow<Setting>;
+}
+
+// schema
+
+type DiscordSchemaTables_key = 'discord_guild' | 'discord_channel' | 'discord_user';
+type DiscordSchemaTables = DiscordGuildTable | DiscordChannelTable | DiscordUserTable;
+type DiscordChatSchemaTables_key = 'chat' | 'character' | 'preset' | 'setting';
+type DiscordChatSchemaTables = ChatTable | CharacterTable | PresetTable | SettingTable;
+
+export class DiscordSchema implements GenericSchema {
+  Tables: Record<DiscordSchemaTables_key, DiscordSchemaTables>;
+  Views: Record<string, GenericView>;
+  Functions: Record<string, GenericFunction>;
+}
+
+export class DiscordChatSchema implements GenericSchema {
+  Tables: Record<DiscordChatSchemaTables_key, DiscordChatSchemaTables>;
+  Views: Record<string, GenericView>;
+  Functions: Record<string, GenericFunction>;
+}
+
+// Database
+
+export class DiscordDatabase {
+  discord: DiscordSchema;
+  discord_chat: DiscordChatSchema;
+}
+
+// export
+
+export type {
+  // utility
+  WithCreatedAt,
+  WithDefault,
+  WithId,
+  WithLastUpdate,
+  TableRow,
+  // entity
+  Character,
+  Chat,
+  DiscordChannel,
+  DiscordGuild,
+  DiscordUser,
+  Nullable,
+  NullableWithDefault,
+  Preset,
+  Setting,
+};

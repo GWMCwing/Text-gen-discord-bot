@@ -1,11 +1,12 @@
 import { PostgrestClient } from '@supabase/postgrest-js';
+import { DiscordDatabase } from '../types/Database';
 
 const POSTGRES_REST_URL = process.env.POSTGRES_REST_URL;
 if (!POSTGRES_REST_URL) throw new Error('POSTGRES_REST_URL is not defined');
 
 class PostgrestHandler {
-  private _discord: PostgrestClient<any, 'discord'>;
-  private _discord_chat: PostgrestClient<any, 'discord_chat'>;
+  private _discord: PostgrestClient<DiscordDatabase, 'discord'>;
+  private _discord_chat: PostgrestClient<DiscordDatabase, 'discord_chat'>;
 
   constructor(private _url: string) {
     this._discord = new PostgrestClient(_url, {
