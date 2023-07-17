@@ -42,8 +42,8 @@ interface DiscordUser extends WithCreatedAt {
 }
 
 interface Chat extends WithId, WithCreatedAt, WithLastUpdate {
-  history_internal?: string[];
-  history_visible?: string[];
+  history_internal?: string[][];
+  history_visible?: string[][];
   max_new_tokens?: number;
   your_name?: string;
   stop_at_newline?: boolean;
@@ -76,20 +76,20 @@ interface Character extends WithId, WithCreatedAt, WithLastUpdate {
 interface Preset extends WithId, WithCreatedAt, WithLastUpdate {
   name: string;
   //
-  temperature?: number;
-  top_p?: number;
-  top_k?: number;
-  typical_p?: number;
-  epsilon_cutoff?: number;
-  eta_cutoff?: number;
-  repetition_penalty?: number;
-  repetition_penalty_range?: number;
-  encoder_repetition_penalty?: number;
-  no_repeat_ngram_size?: number;
-  min_length?: number;
-  tfs?: number;
-  top_a?: number;
-  do_sample?: boolean;
+  temperature?: Nullable<number>;
+  top_p?: Nullable<number>;
+  top_k?: Nullable<number>;
+  typical_p?: Nullable<number>;
+  epsilon_cutoff?: Nullable<number>;
+  eta_cutoff?: Nullable<number>;
+  repetition_penalty?: Nullable<number>;
+  repetition_penalty_range?: Nullable<number>;
+  encoder_repetition_penalty?: Nullable<number>;
+  no_repeat_ngram_size?: Nullable<number>;
+  min_length?: Nullable<number>;
+  tfs?: Nullable<number>;
+  top_a?: Nullable<number>;
+  do_sample?: Nullable<boolean>;
   // fk
   user_id: string;
 }
@@ -101,7 +101,6 @@ interface Setting extends WithId, WithCreatedAt, WithLastUpdate {
   max_new_tokens_min?: number;
   max_new_tokens_max?: number;
   seed?: boolean;
-  name1?: string;
   custom_stopping_strings?: string;
   stopping_strings?: string[];
   stop_at_newline?: boolean;
