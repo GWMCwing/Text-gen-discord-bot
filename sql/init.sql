@@ -5,9 +5,14 @@
 BEGIN;
 
 -- Default schema
-CREATE SCHEMA IF NOT EXISTS discord_chat_test;
+CREATE SCHEMA IF NOT EXISTS discord_chat;
 
-SET LOCAL search_path TO discord_chat_test, public;
+CREATE SCHEMA IF NOT EXISTS discord;
+
+SET LOCAL search_path TO discord_chat, discord, public;
+
+-- extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 --
 --
@@ -18,7 +23,7 @@ SET LOCAL search_path TO discord_chat_test, public;
 -- ====================================
 -- Discord Guild
 -- ====================================
-CREATE TABLE IF NOT EXISTS "discord_guild"(
+CREATE TABLE IF NOT EXISTS "discord"."discord_guild"(
   "guild_id" text NOT NULL UNIQUE,
   -- trigger
   "created_at" timestamp NOT NULL DEFAULT NOW(),
@@ -29,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "discord_guild"(
 -- ====================================
 -- Discord Channel
 -- ====================================
-CREATE TABLE IF NOT EXISTS "discord_channel"(
+CREATE TABLE IF NOT EXISTS "discord"."discord_channel"(
   "channel_id" text NOT NULL UNIQUE,
   -- trigger
   "created_at" timestamp NOT NULL DEFAULT NOW(),
@@ -42,7 +47,7 @@ CREATE TABLE IF NOT EXISTS "discord_channel"(
 -- ====================================
 -- Discord User
 -- ====================================
-CREATE TABLE IF NOT EXISTS "discord_user"(
+CREATE TABLE IF NOT EXISTS "discord"."discord_user"(
   "user_id" text NOT NULL UNIQUE,
   -- trigger
   "created_at" timestamp NOT NULL DEFAULT NOW(),
@@ -53,7 +58,7 @@ CREATE TABLE IF NOT EXISTS "discord_user"(
 -- ====================================
 -- Text-gen Chat
 -- ====================================
-CREATE TABLE IF NOT EXISTS "chat"(
+CREATE TABLE IF NOT EXISTS "discord_chat"."chat"(
   "id" uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
   --
   "history_internal" text[] NOT NULL DEFAULT '{}',
@@ -86,7 +91,7 @@ CREATE TABLE IF NOT EXISTS "chat"(
 -- ====================================
 -- Text-gen Character
 -- ====================================
-CREATE TABLE IF NOT EXISTS "character"(
+CREATE TABLE IF NOT EXISTS "discord_chat"."character"(
   "id" uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
   "profile_name" text NOT NULL,
   "context" text NOT NULL,
@@ -100,13 +105,13 @@ CREATE TABLE IF NOT EXISTS "character"(
   PRIMARY KEY ("id", "profile_name")
 );
 
-COMMENT ON TABLE "character" IS 'Text-gen Character';
+COMMENT ON TABLE "discord_chat"."character" IS 'Text-gen Character';
 
 --
 -- ====================================
 -- Text-gen Preset
 -- ====================================
-CREATE TABLE IF NOT EXISTS "preset"(
+CREATE TABLE IF NOT EXISTS "discord_chat"."preset"(
   "id" uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
   "name" text NOT NULL,
   --
@@ -133,15 +138,15 @@ CREATE TABLE IF NOT EXISTS "preset"(
   PRIMARY KEY ("id", "name")
 );
 
-CREATE INDEX IF NOT EXISTS "preset_discord_user_id_idx" ON "preset"("user_id");
+CREATE INDEX IF NOT EXISTS "preset_discord_user_id_idx" ON "discord_chat"."preset"("user_id");
 
-CREATE INDEX IF NOT EXISTS "preset_name_idx" ON "preset"("name");
+CREATE INDEX IF NOT EXISTS "preset_name_idx" ON "discord_chat"."preset"("name");
 
 --
 -- ====================================
 -- Text-gen Setting
 -- ====================================
-CREATE TABLE IF NOT EXISTS "setting"(
+CREATE TABLE IF NOT EXISTS "discord_chat"."setting"(
   "id" uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
   "name" text NOT NULL,
   "context" text NOT NULL,
@@ -187,39 +192,39 @@ CREATE TABLE IF NOT EXISTS "setting"(
 -- ====================================
 -- discord_channel
 -- ====================================
-ALTER TABLE "discord_channel"
-  ADD CONSTRAINT "FK_discord_guild_TO_discord_channel" FOREIGN KEY ("guild_id") REFERENCES "discord_guild"("guild_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "discord"."discord_channel"
+  ADD CONSTRAINT "FK_discord_guild_TO_discord_channel" FOREIGN KEY ("guild_id") REFERENCES "discord"."discord_guild"("guild_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- ====================================
 -- preset
 -- ====================================
-ALTER TABLE "preset"
-  ADD CONSTRAINT "FK_discord_user_TO_preset" FOREIGN KEY ("user_id") REFERENCES "discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "discord_chat"."preset"
+  ADD CONSTRAINT "FK_discord_user_TO_preset" FOREIGN KEY ("user_id") REFERENCES "discord"."discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- ====================================
 -- character
 -- ====================================
-ALTER TABLE "character"
-  ADD CONSTRAINT "FK_discord_user_TO_character" FOREIGN KEY ("user_id") REFERENCES "discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "discord_chat"."character"
+  ADD CONSTRAINT "FK_discord_user_TO_character" FOREIGN KEY ("user_id") REFERENCES "discord"."discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- ====================================
 -- setting
 -- ====================================
-ALTER TABLE "setting"
-  ADD CONSTRAINT "FK_discord_user_TO_setting" FOREIGN KEY ("user_id") REFERENCES "discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "discord_chat"."setting"
+  ADD CONSTRAINT "FK_discord_user_TO_setting" FOREIGN KEY ("user_id") REFERENCES "discord"."discord_user"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- ====================================
 -- chat
 -- ====================================
-ALTER TABLE "chat"
-  ADD CONSTRAINT "FK_discord_channel_TO_chat" FOREIGN KEY ("channel_id") REFERENCES "discord_channel"("channel_id") ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT "FK_character_TO_chat" FOREIGN KEY ("character_id") REFERENCES "character"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT "FK_preset_TO_chat" FOREIGN KEY ("preset_id") REFERENCES "preset"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT "FK_setting_TO_chat" FOREIGN KEY ("setting_id") REFERENCES "setting"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "discord_chat"."chat"
+  ADD CONSTRAINT "FK_discord_channel_TO_chat" FOREIGN KEY ("channel_id") REFERENCES "discord"."discord_channel"("channel_id") ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT "FK_character_TO_chat" FOREIGN KEY ("character_id") REFERENCES "discord_chat"."character"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT "FK_preset_TO_chat" FOREIGN KEY ("preset_id") REFERENCES "discord_chat"."preset"("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT "FK_setting_TO_chat" FOREIGN KEY ("setting_id") REFERENCES "discord_chat"."setting"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 --
@@ -242,22 +247,22 @@ LANGUAGE plpgsql;
 
 --
 CREATE TRIGGER update_character_last_update
-  BEFORE UPDATE ON "character"
+  BEFORE UPDATE ON "discord_chat"."character"
   FOR EACH ROW
   EXECUTE FUNCTION update_last_update();
 
 CREATE TRIGGER update_chat_last_update
-  BEFORE UPDATE ON "chat"
+  BEFORE UPDATE ON "discord_chat"."chat"
   FOR EACH ROW
   EXECUTE FUNCTION update_last_update();
 
 CREATE TRIGGER update_preset_last_update
-  BEFORE UPDATE ON "preset"
+  BEFORE UPDATE ON "discord_chat"."preset"
   FOR EACH ROW
   EXECUTE FUNCTION update_last_update();
 
 CREATE TRIGGER update_setting_last_update
-  BEFORE UPDATE ON "setting"
+  BEFORE UPDATE ON "discord_chat"."setting"
   FOR EACH ROW
   EXECUTE FUNCTION update_last_update();
 
@@ -278,7 +283,7 @@ LANGUAGE plpgsql;
 
 --
 CREATE OR REPLACE TRIGGER update_total_history_character
-  BEFORE UPDATE ON "chat"
+  BEFORE UPDATE ON "discord_chat"."chat"
   FOR EACH ROW
   EXECUTE PROCEDURE update_total_history_character();
 

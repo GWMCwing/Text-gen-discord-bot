@@ -1,3 +1,5 @@
+import { GenericFunction, GenericSchema, GenericTable, GenericView } from '@supabase/postgrest-js/dist/module/types';
+
 type WithDefault<T> = T;
 type Nullable<T> = T | null;
 type NullableWithDefault<T> = WithDefault<Nullable<T>>;
@@ -15,7 +17,9 @@ interface WithLastUpdate {
 }
 
 interface DiscordGuild extends WithCreatedAt {
-  guild_id: WithDefault<string>;
+  Row: {
+    guild_id: WithDefault<string>;
+  };
 }
 
 interface DiscordChannel extends WithCreatedAt {
