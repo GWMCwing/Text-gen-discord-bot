@@ -2,13 +2,13 @@ import { Client, Events } from 'discord.js';
 import { config as env } from 'dotenv';
 env();
 //
-import db from './database/typeorm_old/Database';
+import { discord, discord_chat } from './database/Handler';
 import Bot from './bot/Bot';
 import logger from './utility/logging/logging';
 
 (async () => {
   logger.info('Setting up database...');
-  await db.connect();
+  await discord_chat.from('discord_chat:chat').select('*').eq('id', '1');
   logger.info('Database is ready.');
   // reload config
   const client = new Client({
