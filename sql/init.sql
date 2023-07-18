@@ -284,5 +284,26 @@ CREATE OR REPLACE TRIGGER update_total_history_character
 
 --
 --
+-- ************************************
+-- Grant privileges
+-- ************************************
+GRANT ALL PRIVILEGES ON SCHEMA "discord" TO discord_chat;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA "discord" TO discord_chat;
+
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA "discord" TO discord_chat;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA "discord" GRANT ALL PRIVILEGES ON TABLES TO discord_chat;
+
+GRANT ALL PRIVILEGES ON SCHEMA "discord_chat" TO discord_chat;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA "discord_chat" GRANT ALL PRIVILEGES ON TABLES TO discord_chat;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA "discord_chat" TO discord_chat;
+
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA "discord_chat" TO discord_chat;
+
+--
+--
 COMMIT;
 
