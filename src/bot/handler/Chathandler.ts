@@ -1,9 +1,9 @@
 import { ChannelType, Client, Message } from 'discord.js';
-import GuildCache, { GuildData } from '../../utility/Cache/GuildCache';
+import { guildCache, GuildData, GuildCache } from '../../utility/Cache/GuildCache';
 import Handler from './Handler';
 
 class ChatHandler extends Handler {
-  private guildCache: GuildCache = new GuildCache();
+  private guildCache: GuildCache = guildCache;
   private readonly allowedChannels: ChannelType[] = [ChannelType.GuildText, ChannelType.PrivateThread, ChannelType.PublicThread];
 
   constructor(client: Client) {
@@ -21,7 +21,7 @@ class ChatHandler extends Handler {
       const guild = message.guild;
       if (!guild) return;
       const guildId = guild.id;
-      const guildData = this.guildCache.get(guildId);
+      const guildData = await this.guildCache.get(guildId);
       if (!guildData) {
         const newGuildData: GuildData = {
           id: guildId,
@@ -31,7 +31,7 @@ class ChatHandler extends Handler {
         return;
       }
       const registeredChannels = guildData.registeredChannels;
-      if (!registeredChannels.includes(message.channel)) return;
+      if (!registeredChannels.includes(message.channel.id)) return;
       message.react('👍');
     });
   }

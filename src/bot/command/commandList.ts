@@ -4,6 +4,7 @@ import { CreateCharacter } from './chat/entity/character/Create';
 import { ChatInputSlashCommand, ModalSubmitSlashCommand, SlashCommand } from './SlashCommand';
 import { CreateConfig } from './chat/config/Create';
 import logger from '../../utility/logging/logging';
+import RegisterChannel from './chat/guild/register';
 
 const commands = new Collection<string, SlashCommand>();
 //
@@ -52,6 +53,7 @@ logger.info('Registering commands');
 SetCommand(new Status());
 SetCommand(new CreateCharacter());
 SetCommand(new CreateConfig());
+SetCommand(new RegisterChannel());
 
 //
 logger.info(

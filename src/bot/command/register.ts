@@ -1,8 +1,8 @@
+import { config as env } from 'dotenv';
+env();
 import { REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { commands } from './commandList';
-import { config as env } from 'dotenv';
 import logger from '../../utility/logging/logging';
-env();
 
 const commandData: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
 
